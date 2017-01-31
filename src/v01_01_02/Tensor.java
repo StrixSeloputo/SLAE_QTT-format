@@ -8,6 +8,25 @@ import java.util.Scanner;
 import org.ejml.data.DenseMatrix64F;
 
 public class Tensor {
+	public static Tensor Ident(int d, int ... ord)
+	{
+		int []order = new int[d];
+		System.arraycopy(ord,0,order,0,d);
+		Tensor T = new Tensor (order);
+		int k = Integer.MAX_VALUE;
+		int []index = new int [d];
+		for (int i = 0; i < d; i++)
+			if (order[i] < k)
+				k = order[i];
+		for (int i = 0; i < k; i++)
+		{
+			for (int j = 0; j < d; j++)
+				index[j] = i;
+			T._data[T.getIndex(d, index)] = 1;
+		}
+		return T;
+	}
+	
 	public Tensor() {}
 	public Tensor(int []ord)
 	{
@@ -121,6 +140,10 @@ public class Tensor {
             throw new IllegalArgumentException("The length of this matrix's data array is too small.");
         System.arraycopy(data,0,_data,0,size());
     }
+	public double get(int d, int...ind)
+	{
+        return _data[getIndex(d, ind)];
+	}
 	public Tensor kmul(double k)
 	{
 		double []data = _data.clone();
@@ -128,7 +151,7 @@ public class Tensor {
 			data[i] *= k;
 		return new Tensor(_order, data);
 	}
-	public Tensor mul(double... vector)
+	Tensor mul(double... vector)
 	{
 		int m = _order[0],
 			l = _order[1],
@@ -144,6 +167,25 @@ public class Tensor {
 				for (int k = 0; k < l; k++)
 					data[i*n+j] += _data[(i*m+k)*l+j]*v[k];
 		return new Tensor(order, data);
+	}
+	public Tensor tensorTensorMul(Tensor T)
+	{
+		int d = dim(),
+			t = T.dim(),
+			k = _order[d-1];
+		if (T._order[0] == k)
+		{
+			int []	ord1 = _order.clone(),
+					ord2 = T._order.clone();
+			DenseMatrix64F R = Utility.matrixMatrixMult(unfolding(d-2), T.unfolding(0));
+			int []ord = new int[d-1+t];
+			for (int i = 0; i < d; i++)
+				ord[i] = ord1[i];
+			for (int i = 1; i < t; i++)
+				ord[d+i-1] = ord2[i];
+			return new Tensor(R).reshape(ord.length, ord);
+		}
+		return null;
 	}
 	
 	Tensor unionRow(Tensor T)
@@ -200,6 +242,18 @@ public class Tensor {
 			for (int l = 0; l < T._order[1]; l++)
 				data[(k+_order[0])*m+l+_order[1]] = T._data[(k+_order[0])*T._order[0]+l+_order[1]];
 		return new Tensor(ord, data);
+	}
+	
+	private int getIndex(int d, int...ind)
+	{
+		if (d != dim())
+			return -1;
+		int []index = new int[d];
+        System.arraycopy(ind,0,index,0,d);
+        int i = index[0];
+        for (int j = 1; j < d; j++)
+        	i = i*_order[j] + index[j];
+        return i;
 	}
 	
 	int		[]_order;

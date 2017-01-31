@@ -4,9 +4,9 @@ import java.util.ArrayList;
 import org.ejml.data.DenseMatrix64F;
 import org.ejml.alg.dense.decomposition.svd.SvdImplicitQrDecompose_D64;
 
-public class TensorDecompositon {
+public class TensorDecomposition {
 
-	public static Pair<ArrayList<Tensor>, int[]> TTdecompotion(Tensor A, double epsilon)
+	public static Triple<ArrayList<Tensor>, int[], int[]> TTdecompotion(Tensor A, double epsilon)
 	{
 		int d = A.dim(),
 			N = A.size();
@@ -30,7 +30,7 @@ public class TensorDecompositon {
 			N = (N*r[k])/(A.n(k)*r[k-1]);
 		}
 		ttfList.add(C);
-		return new Pair<ArrayList<Tensor>,int[]> (ttfList, r);
+		return new Triple<ArrayList<Tensor>,int[], int[]> (ttfList, r, A._order);
 	}
 	
 	public static Triple<DenseMatrix64F, DenseMatrix64F, DenseMatrix64F> SVD(DenseMatrix64F  C)
