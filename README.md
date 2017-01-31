@@ -10,4 +10,6 @@ There are simple logic:
 *  algorithm operates only with TT-format, that's why You should use TensorDecomposition to transfor Tensor to TensorTrain or 
       TensorTrain-constructor if You have not tensor in TT-format;
 *  Pair, Triple and Utility are helped classes;
-*  there is used external library EJML (http://ejml.org/wiki/index.php?title=Main_Page), You can download it here (http://ejml.org/wiki/index.php?title=Download)
+*  there is used external library <a href="http://ejml.org/wiki/index.php?title=Main_Page">EJML</a>, You can download it <a href="http://ejml.org/wiki/index.php?title=Download">here</a>
+
+Link to return to <a href="https://github.com/StrixSeloputo/SLAE_QTT-format">github</a>
